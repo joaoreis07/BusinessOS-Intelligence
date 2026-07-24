@@ -1,0 +1,5 @@
+{
+  "npm.exclude": "**/references/**",
+  "npm.packageManager": "npm",
+  "npm.autoDetect": "on"
+}
