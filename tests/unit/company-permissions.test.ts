@@ -2,9 +2,10 @@ import { describe, expect, it } from "vitest";
 import { hasCompanyPermission } from "@/lib/permissions/company-permissions";
 
 describe("company permissions", () => {
-  it("reserves subscription management for owners", () => {
+  it("grants subscription management to owners and admins", () => {
     expect(hasCompanyPermission("owner", "subscription:manage")).toBe(true);
-    expect(hasCompanyPermission("admin", "subscription:manage")).toBe(false);
+    expect(hasCompanyPermission("admin", "subscription:manage")).toBe(true);
+    expect(hasCompanyPermission("manager", "subscription:manage")).toBe(false);
   });
 
   it("keeps viewers read-only except scheduling read", () => {
