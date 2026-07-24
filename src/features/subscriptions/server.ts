@@ -1,5 +1,3 @@
-"use server";
-
 import "server-only";
 
 import { hasCompanyPermission } from "@/lib/permissions/company-permissions";
@@ -23,6 +21,12 @@ import type {
 const PLAN_SELECT =
   "id, code, name, description, price, currency, billing_interval, trial_days, display_order, plan_features(feature_key, enabled, limits)";
 
+type PlanSource = Parameters<typeof mapPlan>[0];
+
+function asPlanRow(row: unknown): PlanSource {
+  return row as PlanSource;
+}
+
 function assertBillingManager(role: string | null | undefined) {
   if (role !== "owner" && role !== "admin") {
     throw new Error("Sem permissão para gerenciar a assinatura.");
@@ -45,7 +49,7 @@ async function fetchPlanById(
     await supabase.from("plans").select(PLAN_SELECT).eq("id", planId).single(),
     "Plano da assinatura não encontrado.",
   );
-  return mapPlan(row);
+  return mapPlan(asPlanRow(row));
 }
 
 export async function getSubscription(): Promise<SubscriptionDTO | null> {
@@ -73,7 +77,7 @@ export async function listPlans(): Promise<PlanDTO[]> {
       .is("deleted_at", null)
       .order("display_order"),
   );
-  return rows.map(mapPlan);
+  return rows.map((row) => mapPlan(asPlanRow(row)));
 }
 
 export async function listSubscriptionPaymentsPaginated(

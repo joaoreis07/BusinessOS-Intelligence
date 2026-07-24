@@ -1,5 +1,3 @@
-"use server";
-
 import "server-only";
 
 import { getDashboardSummary, resolveDashboardCapabilities } from "@/features/dashboard/server";

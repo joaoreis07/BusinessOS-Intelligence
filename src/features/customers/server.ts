@@ -1,5 +1,3 @@
-"use server";
-
 import "server-only";
 
 import { hasCompanyPermission } from "@/lib/permissions/company-permissions";
@@ -146,17 +144,7 @@ export async function getCustomer(idInput: unknown): Promise<CustomerDetailDTO |
   if (error) throw new Error(error.message);
   if (!data) return null;
 
-  const filtered = {
-    ...data,
-    customer_notes: (data.customer_notes ?? []).filter(
-      (note: { deleted_at?: string | null }) => !note.deleted_at,
-    ),
-    appointments: (data.appointments ?? []).filter(
-      (appointment: { deleted_at?: string | null }) => !appointment.deleted_at,
-    ),
-  };
-
-  return mapCustomerDetail(filtered);
+  return mapCustomerDetail(data as unknown as Parameters<typeof mapCustomerDetail>[0]);
 }
 
 export async function createCustomer(input: unknown) {

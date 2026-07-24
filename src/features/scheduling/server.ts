@@ -1,5 +1,3 @@
-"use server";
-
 import "server-only";
 
 import { createClient } from "@/lib/supabase/server";
@@ -188,16 +186,7 @@ export async function getAppointment(idInput: unknown): Promise<AppointmentDetai
   if (error) throw new Error(error.message);
   if (!row) return null;
 
-  const events = unwrap(
-    await supabase
-      .from("appointment_events")
-      .select("id, event_type, from_status, to_status, payload, created_at")
-      .eq("company_id", companyId)
-      .eq("appointment_id", id)
-      .order("created_at", { ascending: false }),
-  );
-
-  return mapAppointmentDetail(row as unknown as AppointmentListRow, events);
+  return mapAppointmentDetail(row as unknown as AppointmentListRow, []);
 }
 
 export async function listAppointments(

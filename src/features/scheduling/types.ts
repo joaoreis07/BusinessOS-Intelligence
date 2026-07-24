@@ -1,3 +1,4 @@
+export type { AppointmentPanelView } from "./schemas";
 import type { AppointmentStatus } from "./schemas";
 import type { BookingFlow, SchedulingPreferences } from "./settings/schemas";
 

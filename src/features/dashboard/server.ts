@@ -1,5 +1,3 @@
-"use server";
-
 import "server-only";
 
 import { listCustomersPaginated } from "@/features/customers/server";

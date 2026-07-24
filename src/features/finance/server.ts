@@ -1,5 +1,3 @@
-"use server";
-
 import "server-only";
 
 import { hasCompanyPermission } from "@/lib/permissions/company-permissions";
@@ -29,6 +27,12 @@ import type {
 
 const FINANCIAL_LIST_SELECT =
   "*, financial_categories(name), customers(full_name)";
+
+type FinancialEntrySource = Parameters<typeof mapFinancialEntryListItem>[0];
+
+function asFinancialEntryRow(row: unknown): FinancialEntrySource {
+  return row as FinancialEntrySource;
+}
 
 export function resolveFinancePanelCapabilities(
   role: CompanyRole,
@@ -98,7 +102,7 @@ export async function listFinancialEntriesPaginated(
   );
 
   return {
-    items: rows.map(mapFinancialEntryListItem),
+    items: rows.map((row) => mapFinancialEntryListItem(asFinancialEntryRow(row))),
     page: value.page,
     pageSize: value.pageSize,
     total,
@@ -142,7 +146,7 @@ export async function getFinancialEntry(idInput: unknown): Promise<FinancialEntr
     .maybeSingle();
 
   if (error) throw new Error(error.message);
-  return data ? mapFinancialEntryListItem(data) : null;
+  return data ? mapFinancialEntryListItem(asFinancialEntryRow(data)) : null;
 }
 
 export async function getFinancialSummary(periodInput: unknown): Promise<FinancialDashboardSummaryDTO> {
@@ -214,7 +218,7 @@ export async function createFinancialEntry(input: unknown) {
       .select(FINANCIAL_LIST_SELECT)
       .single(),
   );
-  return mapFinancialEntryListItem(row);
+  return mapFinancialEntryListItem(asFinancialEntryRow(row));
 }
 
 export async function updateFinancialEntry(idInput: unknown, input: unknown) {
@@ -243,7 +247,7 @@ export async function updateFinancialEntry(idInput: unknown, input: unknown) {
       .select(FINANCIAL_LIST_SELECT)
       .single(),
   );
-  return mapFinancialEntryListItem(row);
+  return mapFinancialEntryListItem(asFinancialEntryRow(row));
 }
 
 export async function markFinancialEntryPaid(idInput: unknown, paidAt = new Date().toISOString()) {
