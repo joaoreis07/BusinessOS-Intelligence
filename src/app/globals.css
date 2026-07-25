@@ -69,6 +69,14 @@ a {
   filter: brightness(1.08);
 }
 
+.landing-theme {
+  scroll-behavior: smooth;
+}
+
+.landing-section + .landing-section {
+  scroll-margin-top: 4rem;
+}
+
 .reveal-up {
   opacity: 0;
   transform: translateY(16px);

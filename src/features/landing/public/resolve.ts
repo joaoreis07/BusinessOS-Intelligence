@@ -79,7 +79,15 @@ export async function getPublicSlugStatus(slugInput: unknown): Promise<PublicSlu
   const { data, error } = await supabase.rpc("get_public_slug_status", {
     company_slug: slug,
   });
-  if (error) return "not_found";
+  if (error) {
+    if (error.code === "PGRST202") {
+      throw new AppError(
+        "INTERNAL_ERROR",
+        "Banco de dados ainda não foi inicializado. Aplique as migrations do Supabase.",
+      );
+    }
+    return "not_found";
+  }
   const status = data as PublicSlugStatus;
   if (
     status === "not_found" ||

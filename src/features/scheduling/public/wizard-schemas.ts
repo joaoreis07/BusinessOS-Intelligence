@@ -1,12 +1,13 @@
 import { z } from "zod";
 
+import { postgresUuidSchema } from "@/lib/schemas/uuid";
 import { publicSlugSchema } from "../../landing/schemas";
 import { schedulingPreferencesSchema } from "../settings/schemas";
 
 export const publicAvailabilityRangeSchema = z
   .object({
     companySlug: publicSlugSchema,
-    serviceId: z.uuid(),
+    serviceId: postgresUuidSchema,
     dateFrom: z.iso.date(),
     dateTo: z.iso.date(),
   })
@@ -24,7 +25,7 @@ export const publicAvailabilityRangeSchema = z
 
 export const publicAvailableDatesActionSchema = z.object({
   slug: publicSlugSchema,
-  serviceId: z.uuid(),
+  serviceId: postgresUuidSchema,
   dateFrom: z.iso.date(),
   dateTo: z.iso.date(),
 });
@@ -85,14 +86,14 @@ export function buildPublicBookingActionSchema(
 ) {
   return buildPublicCustomerFieldsSchema(preferences).extend({
     slug: publicSlugSchema,
-    serviceId: z.uuid(),
+    serviceId: postgresUuidSchema,
     startsAt: z.iso.datetime({ offset: true }),
     idempotencyKey: z.string().trim().min(16).max(200).optional(),
   });
 }
 
 export const bookingWizardServiceStepSchema = z.object({
-  serviceId: z.uuid("Selecione um serviço."),
+  serviceId: postgresUuidSchema,
 });
 
 export const bookingWizardDateStepSchema = z.object({

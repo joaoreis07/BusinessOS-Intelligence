@@ -153,7 +153,7 @@ export function BookingWizard({
   );
 
   const loadTimes = useCallback(
-    (nextDate: string, nextServiceId = serviceId) => {
+    (nextDate: string, nextServiceId = serviceId, advanceToTimeStep = false) => {
       setDate(nextDate);
       setStartsAt("");
       setTimes([]);
@@ -168,6 +168,9 @@ export function BookingWizard({
         });
         setTimes(result.data);
         setMessage(result.error);
+        if (advanceToTimeStep && result.data.length && !result.error) {
+          setStep("time");
+        }
       });
     },
     [company.slug, serviceId],
@@ -357,12 +360,34 @@ export function BookingWizard({
 
   return (
     <main className="min-h-screen bg-[var(--background)]">
-      <header className="bg-slate-950 py-10 text-white sm:py-14">
-        <div className="mx-auto max-w-3xl px-4 text-center">
-          <p className="text-sm text-white/60">{company.name}</p>
-          <h1 className="mt-2 text-3xl font-bold sm:text-4xl">Agendar atendimento</h1>
+      <header
+        className="relative overflow-hidden py-10 text-white sm:py-14"
+        style={{
+          background: `linear-gradient(135deg, ${primaryColor} 0%, color-mix(in srgb, ${primaryColor} 72%, #000) 100%)`,
+        }}
+      >
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 opacity-30"
+          style={{
+            background:
+              "radial-gradient(circle at top right, rgba(255,255,255,0.35), transparent 55%)",
+          }}
+        />
+        <div className="relative mx-auto max-w-3xl px-4 text-center">
+          <Link
+            href={`/${company.slug}`}
+            className="mb-4 inline-flex items-center gap-1.5 text-sm text-white/75 transition-colors hover:text-white"
+          >
+            <ArrowLeft size={14} aria-hidden />
+            Voltar para o site
+          </Link>
+          <p className="text-sm font-medium text-white/80">{company.name}</p>
+          <h1 className="mt-2 font-serif text-3xl font-semibold sm:text-4xl">
+            Agendar atendimento
+          </h1>
           {(company.city || company.state) && (
-            <p className="mt-3 inline-flex items-center justify-center gap-1.5 text-sm text-white/70">
+            <p className="mt-3 inline-flex items-center justify-center gap-1.5 text-sm text-white/80">
               <MapPin size={14} aria-hidden />
               {[company.city, company.state].filter(Boolean).join(" — ")}
             </p>
@@ -372,7 +397,7 @@ export function BookingWizard({
 
       <div className="mx-auto max-w-3xl px-4 py-8">
         <nav aria-label="Progresso do agendamento" className="mb-8">
-          <div className="mb-3 h-2 overflow-hidden rounded-full bg-[var(--surface-subtle)]">
+          <div className="mb-3 h-2 overflow-hidden rounded-full bg-white shadow-inner">
             <div
               className="h-full rounded-full transition-all duration-300"
               style={{ width: `${progress}%`, backgroundColor: primaryColor }}
@@ -383,17 +408,20 @@ export function BookingWizard({
               aria-label={`Etapa ${currentStepIndex + 1} de ${BOOKING_WIZARD_STEPS.length}`}
             />
           </div>
-          <ol className="flex flex-wrap gap-2 text-xs font-medium text-[var(--muted)] sm:text-sm">
+          <ol className="flex flex-wrap gap-2 text-xs font-medium sm:text-sm">
             {BOOKING_WIZARD_STEPS.map((wizardStep, index) => (
               <li
                 key={wizardStep}
                 aria-current={wizardStep === step ? "step" : undefined}
                 className={cn(
-                  "rounded-full px-3 py-1",
+                  "rounded-full px-3 py-1.5 transition-colors",
                   index <= currentStepIndex
-                    ? "bg-[var(--accent)] text-[var(--foreground)]"
-                    : "bg-white",
+                    ? "text-white shadow-sm"
+                    : "bg-white text-[var(--muted)]",
                 )}
+                style={
+                  index <= currentStepIndex ? { backgroundColor: primaryColor } : undefined
+                }
               >
                 {index + 1}. {STEP_LABELS[wizardStep]}
               </li>
@@ -403,7 +431,7 @@ export function BookingWizard({
 
         <section
           aria-labelledby="wizard-step-title"
-          className="rounded-2xl border bg-white p-5 shadow-sm sm:p-8"
+          className="rounded-[1.75rem] border border-[var(--border)] bg-white p-5 shadow-[0_20px_50px_rgba(15,23,42,0.08)] sm:p-8"
         >
           {step === "service" && (
             <>
@@ -529,15 +557,15 @@ export function BookingWizard({
                           aria-pressed={isSelected}
                           aria-label={`${cell.day} de ${STEP_LABELS.date}${isAvailable ? ", disponível" : ", indisponível"}`}
                           onClick={() => {
-                            if (cell.date && isAvailable) loadTimes(cell.date);
+                            if (cell.date && isAvailable) loadTimes(cell.date, serviceId, true);
                           }}
                           className={cn(
-                            "aspect-square rounded-xl text-sm font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-35",
+                            "aspect-square rounded-xl text-sm font-semibold transition-all focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-30",
                             isSelected
-                              ? "text-white"
+                              ? "scale-105 text-white shadow-md"
                               : isAvailable
-                                ? "hover:bg-[var(--accent)]"
-                                : "text-[var(--muted)]",
+                                ? "bg-[var(--accent)] text-[var(--foreground)] hover:scale-105 hover:shadow-sm"
+                                : "text-[var(--muted)]/50",
                           )}
                           style={isSelected ? { backgroundColor: primaryColor } : undefined}
                         >

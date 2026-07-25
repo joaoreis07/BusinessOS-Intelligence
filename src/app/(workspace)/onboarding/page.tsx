@@ -1,6 +1,5 @@
 import { redirect } from "next/navigation";
-import { completeOnboardingAction } from "./actions";
-import { AuthForm } from "@/components/forms/auth-form";
+import { OnboardingForm } from "@/components/forms/onboarding-form";
 import { createClient } from "@/lib/supabase/server";
 import { requireUser } from "@/lib/auth/guards";
 
@@ -22,24 +21,11 @@ export default async function OnboardingPage() {
       <section className="w-full rounded-2xl border bg-white p-6 shadow-sm">
         <h1 className="text-2xl font-bold">Vamos configurar sua empresa</h1>
         <p className="mt-2 text-sm text-[var(--muted)]">
-          Este passo cria sua empresa, membership, workspace e plano trial.
+          Três informações rápidas para começar. Fuso horário, idioma, logo e cores você
+          ajusta depois nas configurações.
         </p>
         <div className="mt-6">
-          <AuthForm
-            action={completeOnboardingAction}
-            submitLabel="Finalizar onboarding"
-            fields={[
-              { name: "companyName", label: "Nome da empresa" },
-              { name: "slug", label: "Slug público" },
-              { name: "businessType", label: "Segmento" },
-              { name: "timezone", label: "Fuso horário", autoComplete: "off" },
-              { name: "locale", label: "Idioma", autoComplete: "off" },
-              { name: "countryCode", label: "País (código ISO-2)", autoComplete: "off" },
-              { name: "currency", label: "Moeda (código ISO-3)", autoComplete: "off" },
-              { name: "logoPath", label: "Logo (estrutura preparada)", autoComplete: "off" },
-              { name: "primaryColor", label: "Cor principal", autoComplete: "off" },
-            ]}
-          />
+          <OnboardingForm />
         </div>
       </section>
     </main>

@@ -2,9 +2,6 @@
 
 set search_path = public, extensions;
 
-alter type public.membership_role add value if not exists 'manager';
-alter type public.membership_role add value if not exists 'employee';
-
 create table if not exists public.company_invitations (
   id uuid primary key default extensions.gen_random_uuid(),
   company_id uuid not null references public.companies(id) on delete cascade,

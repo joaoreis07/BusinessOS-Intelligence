@@ -134,6 +134,13 @@ export function buildPublicMediaUrl(
   objectPath: string | null,
 ): string | null {
   if (!objectPath) return null;
+  if (
+    objectPath.startsWith("http://") ||
+    objectPath.startsWith("https://") ||
+    objectPath.startsWith("/")
+  ) {
+    return objectPath;
+  }
   const base = supabaseUrl.replace(/\/$/, "");
   return `${base}/storage/v1/object/public/${MEDIA_BUCKET}/${objectPath}`;
 }
@@ -300,7 +307,7 @@ export function mapDifferentialsSection(row: SectionRow | undefined): Differenti
 
   return {
     type: "differentials",
-    enabled: row?.enabled ?? false,
+    enabled: row?.enabled ?? true,
     displayOrder: row?.display_order ?? 35,
     title: row?.title ?? "Diferenciais",
     items,
@@ -353,7 +360,7 @@ export function mapFaqSection(row: SectionRow | undefined): FaqSectionDTO {
 
   return {
     type: "faq",
-    enabled: row?.enabled ?? false,
+    enabled: row?.enabled ?? true,
     displayOrder: row?.display_order ?? 45,
     title: row?.title ?? "Perguntas frequentes",
     items,
@@ -396,7 +403,7 @@ export function mapGallerySection(
 ): GallerySectionDTO {
   return {
     type: "gallery",
-    enabled: row?.enabled ?? false,
+    enabled: row?.enabled ?? true,
     displayOrder: row?.display_order ?? 38,
     title: row?.title ?? "Galeria",
     items: gallery.map((item) => mapGalleryItem(item, supabaseUrl)),

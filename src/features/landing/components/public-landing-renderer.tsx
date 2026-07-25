@@ -1,7 +1,9 @@
 import type { PreviewLandingDTO, PublicLandingDTO } from "../types";
 import { toLandingRenderContext } from "../registry/landing-context";
 import { resolveRenderableSections } from "../registry/resolve-sections";
+import { LandingHeader } from "./ui/landing-header";
 import { LandingTheme } from "./ui/landing-theme";
+import { LandingWhatsappFloat } from "./ui/landing-whatsapp-float";
 import { PreviewBanner } from "./preview-banner";
 import { SectionRenderer } from "./section-renderer";
 
@@ -22,6 +24,7 @@ export function PublicLandingRenderer({ landing }: PublicLandingRendererProps) {
         Pular para o conteúdo
       </a>
       {landing.mode === "preview" ? <PreviewBanner landing={landing} /> : null}
+      <LandingHeader context={context} sections={sections} />
       <main id="landing-main" aria-label={`Página de ${landing.companyName}`}>
         {sections.length === 0 ? (
           <section
@@ -43,6 +46,7 @@ export function PublicLandingRenderer({ landing }: PublicLandingRendererProps) {
           ))
         )}
       </main>
+      <LandingWhatsappFloat context={context} />
     </LandingTheme>
   );
 }

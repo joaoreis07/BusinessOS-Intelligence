@@ -48,8 +48,8 @@ values (
   'Vitta Nutrição Demo',
   'Mariana Silva',
   'Nutrição Clínica',
-  'Atendimento nutricional humano, prático e personalizado.',
-  'A Vitta ajuda pessoas a construírem uma relação mais leve e sustentável com a alimentação.',
+  'Consultas nutricionais personalizadas para quem busca mais energia, saúde e leveza no dia a dia.',
+  'Nutricionista clínica com foco em reeducação alimentar prática. Atendo presencialmente e online, com planos individualizados, acolhimento e estratégias possíveis de manter na rotina.',
   'contato@vitta.demo',
   '+551140028922',
   '+5511999999999',
@@ -69,6 +69,12 @@ on conflict (id) do update set
   active = true,
   deleted_at = null;
 
+update public.companies
+set
+  address = '{"city":"São Paulo","state":"SP","street":"Av. Paulista, 1000","zip":"01310-100"}'::jsonb,
+  social_links = '{"instagram":"https://instagram.com/vitta.demo","website":"https://businessos-intelligence.vercel.app/vitta-demo"}'::jsonb
+where id = '20000000-0000-0000-0000-000000000001';
+
 update public.company_settings
 set
   booking_flow = 'instant_confirmation',
@@ -85,7 +91,9 @@ where company_id = '20000000-0000-0000-0000-000000000001';
 update public.landing_pages
 set
   title = 'Vitta Nutrição — Alimentação com leveza',
-  meta_description = 'Consultas nutricionais personalizadas com a Vitta Nutrição.',
+  meta_description = 'Consultas nutricionais personalizadas com a Dra. Mariana Silva. Atendimento online e presencial com planos práticos e acolhedores.',
+  banner_path = '/landing/vitta-demo/hero.jpg',
+  avatar_path = '/landing/vitta-demo/portrait.jpg',
   published = true,
   published_at = coalesce(published_at, now())
 where company_id = '20000000-0000-0000-0000-000000000001';
@@ -96,17 +104,18 @@ insert into public.landing_sections (
 select
   '20000000-0000-0000-0000-000000000001',
   page.id,
-  section_type,
-  title,
-  content,
-  display_order
+  seed.section_type,
+  seed.title,
+  seed.content,
+  seed.display_order
 from public.landing_pages page
 cross join (
   values
-    ('hero'::public.section_type, 'Nutrição que cabe na vida real', '{"cta":"Agendar consulta","subtitle":"Cuidado personalizado para sua rotina."}'::jsonb, 10),
-    ('about'::public.section_type, 'Sobre a Vitta', '{"text":"Ciência, acolhimento e estratégia para mudanças sustentáveis."}'::jsonb, 20),
-    ('services'::public.section_type, 'Serviços', '{}'::jsonb, 30),
-    ('testimonials'::public.section_type, 'Histórias reais', '{}'::jsonb, 40),
+    ('hero'::public.section_type, 'Nutrição que cabe na vida real', '{"cta":"Agendar consulta","subtitle":"Consultas personalizadas para transformar sua relação com a alimentação — com leveza, ciência e acolhimento."}'::jsonb, 10),
+    ('about'::public.section_type, 'Conheça a Dra. Mariana Silva', '{"text":"Com mais de 10 anos de experiência, ajudo pessoas a alcançarem seus objetivos com planos alimentares possíveis, estratégias práticas e acompanhamento próximo em cada etapa da jornada."}'::jsonb, 20),
+    ('services'::public.section_type, 'Como posso te ajudar', '{}'::jsonb, 30),
+    ('differentials'::public.section_type, 'Por que escolher a Vitta?', '{"items":[{"title":"Plano personalizado","description":"Estratégias alinhadas à sua rotina, preferências e objetivos de saúde."},{"title":"Acompanhamento próximo","description":"Retornos programados para ajustes, evolução e motivação contínua."},{"title":"Atendimento online","description":"Consultas por videochamada com a mesma qualidade do presencial."}]}'::jsonb, 35),
+    ('testimonials'::public.section_type, 'O que dizem as pacientes', '{}'::jsonb, 40),
     ('contact'::public.section_type, 'Vamos conversar?', '{}'::jsonb, 50)
 ) seed(section_type, title, content, display_order)
 where page.company_id = '20000000-0000-0000-0000-000000000001'
@@ -121,8 +130,8 @@ insert into public.services (
   id, company_id, name, description, category, price, duration_minutes, display_order
 )
 values
-  ('30000000-0000-0000-0000-000000000001', '20000000-0000-0000-0000-000000000001', 'Consulta Inicial', 'Avaliação completa e plano alimentar personalizado.', 'Consultas', 180.00, 60, 10),
-  ('30000000-0000-0000-0000-000000000002', '20000000-0000-0000-0000-000000000001', 'Consulta de Retorno', 'Acompanhamento de evolução e ajustes do plano.', 'Consultas', 140.00, 45, 20)
+  ('30000000-0000-0000-0000-000000000001', '20000000-0000-0000-0000-000000000001', 'Consulta Inicial', 'Avaliação completa, anamnese detalhada e plano alimentar personalizado para iniciar sua jornada.', 'Consultas', 180.00, 60, 10),
+  ('30000000-0000-0000-0000-000000000002', '20000000-0000-0000-0000-000000000001', 'Consulta de Retorno', 'Acompanhamento de evolução, ajustes do plano e estratégias para manter os resultados.', 'Consultas', 140.00, 45, 20)
 on conflict (id) do update set
   name = excluded.name,
   description = excluded.description,
@@ -156,18 +165,34 @@ on conflict (company_id, weekday, start_time, end_time) do update set active = t
 insert into public.testimonials (
   company_id, customer_name, quote, rating, published, display_order
 )
-select
-  '20000000-0000-0000-0000-000000000001',
-  'Cliente Demo',
-  'Um atendimento acolhedor e um plano possível de seguir.',
-  5,
-  true,
-  10
+select '20000000-0000-0000-0000-000000000001', 'Ana Paula', 'Perdi 8kg sem radicalismo e aprendi a comer melhor no dia a dia. O acompanhamento fez toda diferença.', 5, true, 10
 where not exists (
   select 1 from public.testimonials
-  where company_id = '20000000-0000-0000-0000-000000000001'
-    and customer_name = 'Cliente Demo'
+  where company_id = '20000000-0000-0000-0000-000000000001' and customer_name = 'Ana Paula'
 );
+
+insert into public.testimonials (
+  company_id, customer_name, quote, rating, published, display_order
+)
+select '20000000-0000-0000-0000-000000000001', 'Juliana M.', 'Planos práticos, acolhedora e sempre disponível para tirar dúvidas. Recomendo demais!', 5, true, 20
+where not exists (
+  select 1 from public.testimonials
+  where company_id = '20000000-0000-0000-0000-000000000001' and customer_name = 'Juliana M.'
+);
+
+insert into public.testimonials (
+  company_id, customer_name, quote, rating, published, display_order
+)
+select '20000000-0000-0000-0000-000000000001', 'Carla R.', 'Consegui controlar minha ansiedade com comida e hoje me sinto muito mais confiante.', 5, true, 30
+where not exists (
+  select 1 from public.testimonials
+  where company_id = '20000000-0000-0000-0000-000000000001' and customer_name = 'Carla R.'
+);
+
+update public.testimonials
+set published = false
+where company_id = '20000000-0000-0000-0000-000000000001'
+  and customer_name = 'Cliente Demo';
 
 insert into public.financial_categories (
   company_id, name, transaction_type, color

@@ -2,7 +2,9 @@
 
 set search_path = public, extensions;
 
-create or replace view public.public_landing_pages
+drop view if exists public.public_landing_pages;
+
+create view public.public_landing_pages
 with (security_barrier = true)
 as
 select
@@ -39,3 +41,5 @@ where company.active
   and company.deleted_at is null
   and page.published
   and page.deleted_at is null;
+
+grant select on public.public_landing_pages to anon, authenticated;

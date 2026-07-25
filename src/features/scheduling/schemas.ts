@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { postgresUuidSchema } from "@/lib/schemas/uuid";
 import { publicSlugSchema } from "../landing/schemas";
 
 export const appointmentStatusSchema = z.enum([
@@ -35,7 +36,7 @@ export const rescheduleAppointmentSchema = z.object({
 
 export const publicBookingSchema = z.object({
   companySlug: publicSlugSchema,
-  serviceId: z.uuid(),
+  serviceId: postgresUuidSchema,
   startsAt: z.iso.datetime({ offset: true }),
   customer: z.object({
     name: z.string().trim().min(2).max(120),
@@ -49,7 +50,7 @@ export const publicBookingSchema = z.object({
 
 export const availabilityQuerySchema = z.object({
   companySlug: publicSlugSchema,
-  serviceId: z.uuid(),
+  serviceId: postgresUuidSchema,
   date: z.iso.date(),
 });
 
@@ -62,13 +63,13 @@ export const availabilityRuleSchema = z.object({
 
 export const publicAvailabilityActionSchema = z.object({
   slug: publicSlugSchema,
-  serviceId: z.uuid(),
+  serviceId: postgresUuidSchema,
   date: z.iso.date(),
 });
 
 export const publicBookingActionSchema = z.object({
   slug: publicSlugSchema,
-  serviceId: z.uuid(),
+  serviceId: postgresUuidSchema,
   startsAt: z.iso.datetime({ offset: true }),
   customerName: z.string().trim().min(2).max(120),
   customerPhone: z.string().trim().min(8).max(32),

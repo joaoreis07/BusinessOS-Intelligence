@@ -21,6 +21,17 @@ describe("public booking wizard schemas", () => {
       ).toMatchObject({ dateFrom: "2026-07-01" });
     });
 
+    it("accepts demo seed service ids that are not RFC uuid v4", () => {
+      expect(
+        publicAvailabilityRangeSchema.parse({
+          companySlug: "vitta-demo",
+          serviceId: "30000000-0000-0000-0000-000000000001",
+          dateFrom: "2026-07-24",
+          dateTo: "2026-07-31",
+        }),
+      ).toMatchObject({ serviceId: "30000000-0000-0000-0000-000000000001" });
+    });
+
     it("rejects ranges longer than 31 days", () => {
       expect(() =>
         publicAvailabilityRangeSchema.parse({

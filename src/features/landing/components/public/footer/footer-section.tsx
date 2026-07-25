@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Mail, MapPin } from "lucide-react";
+import { Mail, MapPin, Phone } from "lucide-react";
 import type { FooterSectionDTO } from "../../../types";
 import type { SectionComponentProps } from "../../../registry/types";
 import { LandingSectionShell } from "../../ui/landing-section-shell";
@@ -16,32 +16,41 @@ export function FooterSection({ section }: FooterSectionProps) {
       ariaLabel="Rodapé"
       landmark="contentinfo"
       dataSectionType="footer"
-      className="border-t border-[var(--landing-muted)]/20 bg-[var(--landing-foreground)] py-10 text-[var(--landing-surface)]/70"
+      className="border-t border-[var(--landing-primary)]/10 bg-[var(--landing-primary)] py-12 text-white/80"
       containerClassName="max-w-6xl"
     >
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+      <div className="flex flex-col gap-8 md:flex-row md:items-start md:justify-between">
         <div>
-          <p className="font-semibold text-[var(--landing-surface)]">{section.companyName}</p>
-          <div className="mt-2 flex flex-wrap gap-4 text-sm">
-            {section.contacts.email ? (
-              <span className="inline-flex items-center gap-1.5">
-                <Mail size={15} aria-hidden />
-                {section.contacts.email}
-              </span>
-            ) : null}
-            {city ? (
-              <span className="inline-flex items-center gap-1.5">
-                <MapPin size={15} aria-hidden />
-                {city}
-                {state ? ` - ${state}` : ""}
-              </span>
-            ) : null}
-          </div>
+          <p className="font-serif text-2xl font-semibold text-white">{section.companyName}</p>
+          <p className="mt-2 max-w-md text-sm leading-7 text-white/70">
+            Atendimento nutricional personalizado com foco em resultados sustentáveis.
+          </p>
         </div>
-        <Link
-          href="/"
-          className="text-sm hover:text-[var(--landing-surface)] focus-visible:outline-2 focus-visible:outline-offset-2"
-        >
+        <div className="space-y-3 text-sm">
+          {section.contacts.email ? (
+            <p className="inline-flex items-center gap-2">
+              <Mail size={16} aria-hidden />
+              {section.contacts.email}
+            </p>
+          ) : null}
+          {section.contacts.phone ? (
+            <p className="inline-flex items-center gap-2">
+              <Phone size={16} aria-hidden />
+              {section.contacts.phone}
+            </p>
+          ) : null}
+          {city ? (
+            <p className="inline-flex items-center gap-2">
+              <MapPin size={16} aria-hidden />
+              {city}
+              {state ? ` - ${state}` : ""}
+            </p>
+          ) : null}
+        </div>
+      </div>
+      <div className="mt-8 flex flex-col gap-3 border-t border-white/10 pt-6 text-sm md:flex-row md:items-center md:justify-between">
+        <p>© {new Date().getFullYear()} {section.companyName}. Todos os direitos reservados.</p>
+        <Link href="/" className="text-white/70 transition-colors hover:text-white">
           Criado com BusinessOS
         </Link>
       </div>
